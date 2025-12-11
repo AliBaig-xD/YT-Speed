@@ -22,7 +22,7 @@ document.getElementById('keyboardHint').textContent =
 function checkYouTubeTab(callback) {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     const tab = tabs[0];
-    if (!tab) {
+    if (!tab || !tab.id || tab.id < 0) {
       callback(false);
       return;
     }
@@ -70,7 +70,10 @@ speedRange.addEventListener('input', (e) => {
 });
 
 applyBtn.addEventListener('click', () => {
-  const v = Number(speedInput.value) || Number(speedRange.value) || DEFAULT_SPEED;
+  let v = Number(speedInput.value);
+  if (!isFinite(v) || v < MIN_SPEED || v > MAX_SPEED) {
+    v = Number(speedRange.value) || DEFAULT_SPEED;
+  }
   const clamped = Math.min(MAX_SPEED, Math.max(MIN_SPEED, v));
   updateUI(clamped);
   applySpeedToActiveTab(clamped, () => {
@@ -96,7 +99,7 @@ speedInput.addEventListener('change', () => {
 function applySpeedToActiveTab(speed, onSuccess) {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     const t = tabs[0];
-    if (!t) return;
+    if (!t || !t.id || t.id < 0) return;
     chrome.tabs.sendMessage(t.id, { type: 'SET_SPEED', value: Number(speed) }, (resp) => {
       if (chrome.runtime.lastError) {
         // Content script not loaded (not on YouTube) - ignore silently

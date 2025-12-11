@@ -13,14 +13,20 @@ function setAllVideosSpeed(speed) {
   const vids = Array.from(document.querySelectorAll('video'));
   vids.forEach(v => {
     try {
-      // apply only to HTMLMediaElement
-      v.playbackRate = speed;
+      // Check if element is still attached to DOM
+      if (v.isConnected) {
+        v.playbackRate = speed;
+      }
     } catch (e) {
       // ignore
     }
   });
   // update badge via sending to background (optional)
-  chrome.runtime.sendMessage({ type: 'SPEED_UPDATED', value: speed }, () => {});
+  chrome.runtime.sendMessage({ type: 'SPEED_UPDATED', value: speed }, () => {
+    if (chrome.runtime.lastError) {
+      // Extension context invalidated or background not ready
+    }
+  });
 }
 
 function readSavedSpeedAndApply() {
@@ -34,44 +40,38 @@ function readSavedSpeedAndApply() {
 // Listen for messages from popup/background
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (!msg || !msg.type) return;
+  
   if (msg.type === 'SET_SPEED') {
     const val = Number(msg.value) || DEFAULT_SPEED;
     window.__yt_speed_controller.desiredSpeed = val;
     // save persistently
-    chrome.storage.sync.set({ ytSpeed: val }, () => {});
+    chrome.storage.sync.set({ ytSpeed: val }, () => {
+      if (chrome.runtime.lastError) {
+        console.warn('Failed to save speed to storage:', chrome.runtime.lastError.message);
+      }
+    });
     setAllVideosSpeed(val);
     sendResponse({ ok: true, value: val });
   } else if (msg.type === 'GET_SPEED') {
     sendResponse({ value: window.__yt_speed_controller.desiredSpeed });
   }
-  // keep channel open for async
-  return true;
+  
+  return true; // Always return true to keep message port open
 });
 
 // Watch for DOM changes: YouTube often replaces the video element on navigation/ads
 const observer = new MutationObserver((mutations) => {
   const speed = window.__yt_speed_controller.desiredSpeed || DEFAULT_SPEED;
-  // If there are added nodes that include <video>, apply speed
-  let foundVideo = false;
-  for (const m of mutations) {
-    if (foundVideo) break; // Early exit once we find a video
-    if (m.addedNodes && m.addedNodes.length) {
-      for (const node of m.addedNodes) {
-        if (node.tagName && node.tagName.toLowerCase() === 'video') {
-          foundVideo = true;
-          break;
-        }
-        // also check subtree (only if node has querySelector)
-        if (node.querySelector) {
-          if (node.querySelector('video')) {
-            foundVideo = true;
-            break;
-          }
-        }
-      }
-    }
-  }
-  if (foundVideo) {
+  
+  // Optimized: Check if any mutation added a video element directly
+  const hasNewVideo = mutations.some(m => {
+    if (!m.addedNodes || !m.addedNodes.length) return false;
+    return Array.from(m.addedNodes).some(node => 
+      node.tagName && node.tagName.toLowerCase() === 'video'
+    );
+  });
+  
+  if (hasNewVideo) {
     // small delay to let the video element initialize
     setTimeout(() => setAllVideosSpeed(speed), VIDEO_INIT_DELAY);
   }
@@ -80,6 +80,11 @@ const observer = new MutationObserver((mutations) => {
 observer.observe(document.documentElement || document.body, {
   childList: true,
   subtree: true
+});
+
+// Cleanup observer on page unload
+window.addEventListener('beforeunload', () => {
+  observer.disconnect();
 });
 
 // Apply saved speed initially
