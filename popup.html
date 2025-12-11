@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>YT Speed+</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="stylesheet" href="popup.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div class="background-glow"></div>
+    <div class="container">
+      <div class="header">
+        <div class="logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" fill="currentColor"/>
+          </svg>
+        </div>
+        <h1>Speed Controller</h1>
+      </div>
+      
+      <div id="statusMessage" class="status-message" style="display:none;"></div>
+
+      <div class="speed-display">
+        <div class="speed-display-label">Current Speed</div>
+        <div class="speed-display-value">
+          <span id="speedValue">1.00</span><span class="speed-unit">×</span>
+        </div>
+      </div>
+
+      <div class="presets">
+        <button class="preset-btn" data-speed="0.5">
+          <span class="preset-value">0.5×</span>
+          <span class="preset-label">Slow</span>
+        </button>
+        <button class="preset-btn" data-speed="0.75">
+          <span class="preset-value">0.75×</span>
+          <span class="preset-label">Relaxed</span>
+        </button>
+        <button class="preset-btn preset-default" data-speed="1">
+          <span class="preset-value">1.0×</span>
+          <span class="preset-label">Normal</span>
+        </button>
+        <button class="preset-btn" data-speed="1.25">
+          <span class="preset-value">1.25×</span>
+          <span class="preset-label">Fast</span>
+        </button>
+        <button class="preset-btn" data-speed="1.5">
+          <span class="preset-value">1.5×</span>
+          <span class="preset-label">Faster</span>
+        </button>
+        <button class="preset-btn" data-speed="2">
+          <span class="preset-value">2.0×</span>
+          <span class="preset-label">Turbo</span>
+        </button>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="custom">
+        <label for="speedRange">Custom Speed</label>
+        <div class="slider-wrapper">
+          <span class="slider-marker">0.25×</span>
+          <input id="speedRange" type="range" min="0.25" max="3" step="0.01" />
+          <span class="slider-marker">3.0×</span>
+        </div>
+        <div class="custom-row">
+          <input id="speedInput" type="number" min="0.25" max="3" step="0.01" placeholder="Enter speed..." />
+          <button id="applyBtn" class="apply-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/>
+            </svg>
+            Apply
+          </button>
+        </div>
+      </div>
+
+      <div class="footer">
+        <button id="resetBtn" class="reset-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z" fill="currentColor"/>
+          </svg>
+          Reset to Default
+        </button>
+      </div>
+      
+      <div class="keyboard-shortcuts">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 5H4c-1.1 0-1.99.9-1.99 2L2 17c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-9 3h2v2h-2V8zm0 3h2v2h-2v-2zM8 8h2v2H8V8zm0 3h2v2H8v-2zm-1 2H5v-2h2v2zm0-3H5V8h2v2zm9 7H8v-2h8v2zm0-4h-2v-2h2v2zm0-3h-2V8h2v2zm3 3h-2v-2h2v2zm0-3h-2V8h2v2z" fill="currentColor"/>
+        </svg>
+        <span id="keyboardHint">Keyboard shortcuts available</span>
+      </div>
+      
+      <div class="credit">
+        <span>Built with</span>
+        <span class="heart">♥</span>
+        <span>by</span>
+        <a href="https://iamalibaig.com" target="_blank" rel="noopener noreferrer">Ali Baig</a>
+      </div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
