@@ -1,0 +1,56 @@
+{
+  "manifest_version": 3,
+  "name": "YT Speed+",
+  "version": "1.0",
+  "description": "Premium YouTube playback speed controller with keyboard shortcuts and custom presets.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": [
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://*.youtube.com/*",
+    "https://youtube.com/*"
+  ],
+  "action": {
+    "default_title": "YT Speed+",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.youtube.com/*", "https://youtube.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "commands": {
+    "increase-speed": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Period",
+        "mac": "Command+Shift+Period"
+      },
+      "description": "Increase playback speed"
+    },
+    "decrease-speed": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Comma",
+        "mac": "Command+Shift+Comma"
+      },
+      "description": "Decrease playback speed"
+    },
+    "reset-speed": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+0",
+        "mac": "Command+Shift+0"
+      },
+      "description": "Reset playback speed to 1.0"
+    }
+  }
+}
