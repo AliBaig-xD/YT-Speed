@@ -21,7 +21,7 @@ A premium Chrome extension for controlling YouTube playback speed with a beautif
 ## 🚀 Installation
 
 ### From Chrome Web Store
-1. Visit the [Chrome Web Store page](#) (coming soon)
+1. Visit the [Chrome Web Store page](https://chromewebstore.google.com/detail/neodkngplgndcoolcobgneccdohenmah)
 2. Click "Add to Chrome"
 3. Enjoy!
 
